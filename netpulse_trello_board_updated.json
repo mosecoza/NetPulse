@@ -1,0 +1,953 @@
+{
+  "name": "NetPulse Local v2.4 — Engineering WBS",
+  "desc": "Updated NetPulse Local v2.4 WBS and QA gates. Adds graceful shutdown, a telemetry history API contract, and clarified acceptance criteria for idempotency, Wi-Fi roaming, consent lifecycle, capability logging, and CSV precision. Phase 1 restart tests use a deterministic fake job runner because speedtest and ISP probe routes arrive in later phases.",
+  "closed": false,
+  "prefs": {
+    "permissionLevel": "private",
+    "background": "blue"
+  },
+  "lists": [
+    {
+      "id": "list_backlog_p2_p5",
+      "name": "Backlog (Phases 2–5)",
+      "closed": false,
+      "pos": 16384
+    },
+    {
+      "id": "list_sprint_ready_p1",
+      "name": "Sprint Ready (Phase 1)",
+      "closed": false,
+      "pos": 32768
+    },
+    {
+      "id": "list_in_progress",
+      "name": "In Progress (WIP Max: 2)",
+      "closed": false,
+      "pos": 49152
+    },
+    {
+      "id": "list_qa_gate",
+      "name": "QA / Acceptance Gate",
+      "closed": false,
+      "pos": 65536
+    },
+    {
+      "id": "list_done",
+      "name": "Done",
+      "closed": false,
+      "pos": 81920
+    }
+  ],
+  "labels": [
+    {
+      "id": "lbl_p1",
+      "name": "Phase 1: Core",
+      "color": "green"
+    },
+    {
+      "id": "lbl_p2",
+      "name": "Phase 2: Cross-Platform",
+      "color": "blue"
+    },
+    {
+      "id": "lbl_p3",
+      "name": "Phase 3: Speed & UI",
+      "color": "purple"
+    },
+    {
+      "id": "lbl_p4",
+      "name": "Phase 4: ISP Probe",
+      "color": "orange"
+    },
+    {
+      "id": "lbl_p5",
+      "name": "Phase 5: Packaging",
+      "color": "red"
+    },
+    {
+      "id": "lbl_qa",
+      "name": "QA Gate",
+      "color": "yellow"
+    }
+  ],
+  "cards": [
+    {
+      "id": "card_1_1_1",
+      "idList": "list_sprint_ready_p1",
+      "idLabels": [
+        "lbl_p1"
+      ],
+      "name": "[1.1.1 - 1.1.2] Localhost Hardening & Boot Token Auth Middleware",
+      "desc": "Implement FastAPI security middleware to prevent DNS rebinding, CSRF, and unauthorized local process access per Section 9.1.",
+      "pos": 16384,
+      "closed": false,
+      "idChecklists": [
+        "chk_1_1_1"
+      ]
+    },
+    {
+      "id": "card_1_1_3",
+      "idList": "list_sprint_ready_p1",
+      "idLabels": [
+        "lbl_p1"
+      ],
+      "name": "[1.1.3 - 1.1.4] ULID Trace ID Middleware & Dual-Clock Utilities",
+      "desc": "Implement contextvars ULID trace_id propagation '(^tr_[0-9A-HJKMNP-TV-Z]{26}$/)' and enforce UTC wall clock vs. time.monotonic() separation per Section 11.1 & 11.2.",
+      "pos": 32768,
+      "closed": false,
+      "idChecklists": [
+        "chk_1_1_3"
+      ]
+    },
+    {
+      "id": "card_1_2_1",
+      "idList": "list_sprint_ready_p1",
+      "idLabels": [
+        "lbl_p1"
+      ],
+      "name": "[1.2.1 - 1.2.3] SQLite WAL Schema, Rollup Workers & 500MB Quota Pruning",
+      "desc": "Initialize SQLite WAL database, 3,600-sample RAM ring buffer, 1m/daily rollup jobs, and non-blocking PRAGMA incremental_vacuum pruning per Section 5 & Section 8.",
+      "pos": 49152,
+      "closed": false,
+      "idChecklists": [
+        "chk_1_2_1"
+      ]
+    },
+    {
+      "id": "card_1_2_4",
+      "idList": "list_sprint_ready_p1",
+      "idLabels": [
+        "lbl_p1"
+      ],
+      "name": "[1.2.4] Persistent Idempotency Store & Restart Reconciliation",
+      "desc": "Implement SQLite-backed idempotency with explicit job status, a 15-minute terminal TTL and startup reconciliation per Section 7.3. Phase 1 uses a fake job runner; verify endpoint replay in Phases 3 and 4.",
+      "pos": 65536,
+      "closed": false,
+      "idChecklists": [
+        "chk_1_2_4"
+      ]
+    },
+    {
+      "id": "card_1_3_1",
+      "idList": "list_sprint_ready_p1",
+      "idLabels": [
+        "lbl_p1"
+      ],
+      "name": "[1.3.1 - 1.3.3] Split-Target Prober & Module A Diagnostic Truth State Machine",
+      "desc": "Build async Gateway/External/TCP:443/DNS probers and 5-state finite state machine (HEALTHY -> SUSPECT -> ACTIVE_FAULT -> RECOVERING -> RESOLVED) per Section 3.",
+      "pos": 98304,
+      "closed": false,
+      "idChecklists": [
+        "chk_1_3_1"
+      ]
+    },
+    {
+      "id": "card_1_4_1",
+      "idList": "list_sprint_ready_p1",
+      "idLabels": [
+        "lbl_p1",
+        "lbl_qa"
+      ],
+      "name": "QA Gate: Phase 1 Automated Acceptance Suite (Gates 1-7)",
+      "desc": "Run automated Phase 1 gates for the diagnostic FSM, persistent idempotency via a fake job runner, quota pruning, localhost security, trace propagation, monotonic timing, and graceful shutdown/restart.",
+      "pos": 114688,
+      "closed": false,
+      "idChecklists": [
+        "chk_1_4_1"
+      ]
+    },
+    {
+      "id": "card_2_1_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p2"
+      ],
+      "name": "[2.1.1 - 2.1.2] Startup Capability Matrix & Unprivileged ARP/TCP Fallbacks",
+      "desc": "Build startup self-check exposing GET /api/system/capabilities and implement TCP:443 SYN + ARP neighbor cache fallbacks when raw ICMP is unavailable per Section 4.",
+      "pos": 16384,
+      "closed": false,
+      "idChecklists": [
+        "chk_2_1_1"
+      ]
+    },
+    {
+      "id": "card_2_2_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p2"
+      ],
+      "name": "[2.2.1 - 2.2.2] Cross-Platform Wi-Fi Telemetry Scrapers & Composite Rollup",
+      "desc": "Implement Windows (netsh), macOS (wdutil/system_profiler), and Linux (nmcli/iw) parsers with composite (ts_minute, bssid) primary keys and wifi_metrics_unavailable fallback.",
+      "pos": 32768,
+      "closed": false,
+      "idChecklists": [
+        "chk_2_2_1"
+      ]
+    },
+    {
+      "id": "card_2_3_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p2",
+        "lbl_qa"
+      ],
+      "name": "QA Gate: Phase 2 Degraded-Mode & Mid-Minute Roaming Tests",
+      "desc": "Verify unprivileged container startup (exit 0 + capability flags) and mid-minute BSSID roaming persistence without PK overwrite.",
+      "pos": 49152,
+      "closed": false,
+      "idChecklists": [
+        "chk_2_3_1"
+      ]
+    },
+    {
+      "id": "card_3_1_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p3"
+      ],
+      "name": "[3.1.1 - 3.1.3] Ookla Speedtest CLI, Bufferbloat & 2.00 Mbps Idle Guardrail",
+      "desc": "Integrate Speedtest CLI JSON runner (with chunked HTTPS fallback), 250ms loaded ping sampler, and 2.00 Mbps active-traffic deferral check.",
+      "pos": 65536,
+      "closed": false,
+      "idChecklists": [
+        "chk_3_1_1"
+      ]
+    },
+    {
+      "id": "card_3_2_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p3"
+      ],
+      "name": "[3.2.1] Backpressure WebSocket Broadcaster & Precision Serializer",
+      "desc": "Implement bounded asyncio.Queue(maxsize=10) drop-oldest delivery per WebSocket client and shared numeric serialization for REST, WebSocket, and CSV output per Section 11.3.",
+      "pos": 81920,
+      "closed": false,
+      "idChecklists": [
+        "chk_3_2_1"
+      ]
+    },
+    {
+      "id": "card_3_2_3",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p3"
+      ],
+      "name": "[3.2.3] Single-Page Web Dashboard (HTML5 / Tailwind / Chart.js)",
+      "desc": "Build the dashboard, dominant-BSSID roaming chart, cursor-paginated events, and telemetry and displayed-events-page CSV exports per Sections 5.1 and 11.5.",
+      "pos": 114688,
+      "closed": false,
+      "idChecklists": [
+        "chk_3_2_3"
+      ]
+    },
+    {
+      "id": "card_3_3_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p3",
+        "lbl_qa"
+      ],
+      "name": "QA Gate: Phase 3 Backpressure, Idle Guardrail & Precision Parity",
+      "desc": "Validate stalled WS client queue cap (10 frames), 5.00 Mbps traffic deferral, and exact decimal parity across REST, WS, and CSV exports.",
+      "pos": 131072,
+      "closed": false,
+      "idChecklists": [
+        "chk_3_3_1"
+      ]
+    },
+    {
+      "id": "card_4_1_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p4"
+      ],
+      "name": "[4.1.1 - 4.1.3] Module E Informed Consent, Domain Allowlist & Monotonic Cooldowns",
+      "desc": "Build Module E consent modal/persistence gate, strict public domain allowlist validator, max_concurrent_jobs=1 lock, and 15-minute monotonic cooldown.",
+      "pos": 147456,
+      "closed": false,
+      "idChecklists": [
+        "chk_4_1_1"
+      ]
+    },
+    {
+      "id": "card_4_2_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p4"
+      ],
+      "name": "[4.2.1 - 4.2.3] DoH Tampering, TLS SNI Reset & Userspace wireproxy VPN Diff",
+      "desc": "Implement UDP DNS vs. DoH comparator, TLS ClientHello SNI probe, 15-hop TCP traceroute, and capped (25MB/10MB) userspace wireproxy throughput comparison.",
+      "pos": 163840,
+      "closed": false,
+      "idChecklists": [
+        "chk_4_2_1"
+      ]
+    },
+    {
+      "id": "card_4_3_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p4",
+        "lbl_qa"
+      ],
+      "name": "QA Gate: Phase 4 Consent, Allowlist & Monotonic Cooldown Clock-Step",
+      "desc": "Verify 403 CONSENT_REQUIRED, 422 INVALID_TARGET_DOMAIN, 409 Conflict concurrency, and 429 cooldown integrity under +2h wall-clock step.",
+      "pos": 180224,
+      "closed": false,
+      "idChecklists": [
+        "chk_4_3_1"
+      ]
+    },
+    {
+      "id": "card_5_1_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p5"
+      ],
+      "name": "[5.1.1 - 5.1.2] System Tray App & Least-Privilege OS Service Wrappers",
+      "desc": "Build pystray tray icon with http://127.0.0... launcher, package standalone binaries, and configure unprivileged systemd/LaunchAgent/Windows Task services.",
+      "pos": 196608,
+      "closed": false,
+      "idChecklists": [
+        "chk_5_1_1"
+      ]
+    },
+    {
+      "id": "card_5_2_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p5"
+      ],
+      "name": "[5.2.1 - 5.2.2] Code Signing Pipelines & Ed25519 Rollback Supervisor",
+      "desc": "Set up Authenticode, Apple Notarization, and GPG release signing; build Ed25519 manifest verifier and 30-second health-check rollback watchdog.",
+      "pos": 212992,
+      "closed": false,
+      "idChecklists": [
+        "chk_5_2_1"
+      ]
+    },
+    {
+      "id": "card_5_3_1",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p5",
+        "lbl_qa"
+      ],
+      "name": "QA Gate: Phase 5 Corrupt Update Rollback & End-to-End Trace Linkage",
+      "desc": "Stage crashing update binary to verify 30s rollback + hash quarantine, and validate end-to-end tr_<ULID> correlation across WS, logs, and CSV.",
+      "pos": 229376,
+      "closed": false,
+      "idChecklists": [
+        "chk_5_3_1"
+      ]
+    },
+    {
+      "id": "card_1_2_5",
+      "idList": "list_sprint_ready_p1",
+      "idLabels": [
+        "lbl_p1"
+      ],
+      "name": "[1.2.5] Graceful Shutdown & Restart Recovery",
+      "desc": "Implement application-lifecycle shutdown with a 10-second total deadline, WebSocket notification, child-process cleanup, SQLite close, and restart reconciliation per Section 5.4. Validate supported Unix and Windows service-stop paths.",
+      "pos": 81920,
+      "closed": false,
+      "idChecklists": [
+        "chk_1_2_5"
+      ]
+    },
+    {
+      "id": "card_3_2_2",
+      "idList": "list_backlog_p2_p5",
+      "idLabels": [
+        "lbl_p3"
+      ],
+      "name": "[3.2.2] Telemetry History REST Contract & Endpoint",
+      "desc": "Implement the Section 7.8 GET /api/telemetry contract, including explicit UTC range, granularity, tier retention, response shapes and 1,000-point limit.",
+      "pos": 98304,
+      "closed": false,
+      "idChecklists": [
+        "chk_3_2_2"
+      ]
+    }
+  ],
+  "checklists": [
+    {
+      "id": "chk_1_1_1",
+      "idCard": "card_1_1_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_1",
+          "name": "Bind Uvicorn strictly to 127.0.0.1:8080",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_2",
+          "name": "Reject requests where Host header is not 127.0.0.1:8080 or localhost:8080",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_3",
+          "name": "Validate Origin header on all state-mutating POST/PUT/DELETE routes",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_4",
+          "name": "Generate 256-bit secrets.token_urlsafe(32) to session.token (0600 / user SID ACL)",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_5",
+          "name": "Enforce X-NetPulse-Token on REST and ?token= on WS handshake",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_1_1_3",
+      "idCard": "card_1_1_3",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_6",
+          "name": "Validate inbound X-Trace-Id against ^tr_[0-9A-HJKMNP-TV-Z]{26}$ or generate new ULID",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_7",
+          "name": "Propagate trace_id via contextvars into all structured JSON logs and error envelopes",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_8",
+          "name": "Enforce UTC wall clock (RFC 3339 Z) for persisted timestamps",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_9",
+          "name": "Enforce time.monotonic() for all durations, timeouts, and cooldown timers",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_81",
+          "name": "Warn on wall-clock regression without changing elapsed timers; fail safely on monotonic regression without emitting negative durations, and test both cases",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_1_2_1",
+      "idCard": "card_1_2_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_10",
+          "name": "Configure SQLite PRAGMA journal_mode=WAL, synchronous=NORMAL, auto_vacuum=INCREMENTAL",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_11",
+          "name": "Implement 3,600-sample in-memory ring buffer (no 1s disk writes)",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_12",
+          "name": "Implement 60s aggregation worker (30d retention) and daily rollup worker (365d retention)",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_13",
+          "name": "Implement 500MB quota pruning worker with PRAGMA incremental_vacuum(500)",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_1_2_4",
+      "idCard": "card_1_2_4",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_14",
+          "name": "Persist endpoint, key, run_id, trace_id, job_status, cached response and expiry atomically; retain terminal records for 15 minutes and never expire RUNNING records",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_15",
+          "name": "Reconcile interrupted RUNNING jobs to FAILED (DAEMON_RESTARTED) on startup",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_16",
+          "name": "Return 409 Conflict with active_run_id when a new key is submitted while a job is running",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_82",
+          "name": "Replay cached 202 while RUNNING and current cached 200 after completion or reconciliation, without spawning a duplicate job; enforce current authorization and consent",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_1_3_1",
+      "idCard": "card_1_3_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_17",
+          "name": "Implement 1s Gateway + Dual External (1.1.1.1, 9.9.9.9) + TCP:443 fallback + 5s DNS probe",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_18",
+          "name": "Implement 5-state FSM with N-of-M rules (4/5 over 5s for drops; 6/10 over 10s for congestion)",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_19",
+          "name": "Enforce 10/10 consecutive healthy recovery window (10s) before resolving faults",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_20",
+          "name": "Serialize evidence_json with schema_version: 1 and LOW/MEDIUM/HIGH confidence enum",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_1_4_1",
+      "idCard": "card_1_4_1",
+      "name": "Phase 1 Acceptance Gates",
+      "checkItems": [
+        {
+          "id": "ci_21",
+          "name": "Gate 1: Fault Simulation (2/5 transient -> no DB row; 4/5 + 10/10 recovery -> 1 resolved event)",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_22",
+          "name": "Gate 2: Fake job restart reconciles RUNNING to FAILED/DAEMON_RESTARTED; repeated replay returns the same 200 without a duplicate. Verify HTTP endpoint replay in Phases 3/4.",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_23",
+          "name": "Gate 3: 460MB synthetic DB prunes below 430MB via incremental_vacuum in <5s",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_24",
+          "name": "Gate 4: Malicious Origin/Host header rejected with 403 Forbidden",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_25",
+          "name": "Gate 5: X-Trace-Id propagated to logs, error envelopes, and DB job rows",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_26",
+          "name": "Gate 6: +/- 5m wall-clock jump does not corrupt monotonic durations or debounce timers",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_64",
+          "name": "Gate 7: Graceful shutdown stops admission, completes bounded cleanup, and restart opens the database and reconciles interrupted jobs",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_2_1_1",
+      "idCard": "card_2_1_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_27",
+          "name": "Expose GET /api/system/capabilities reporting OS permissions and tool availability",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_28",
+          "name": "Implement TCP:443 SYN RTT fallback for external hosts when ICMP is blocked",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_29",
+          "name": "Implement ARP neighbor cache / UDP unreachable probe fallback for local gateway",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_69",
+          "name": "Log the startup capability matrix as structured output before serving requests, with warnings for degraded or unavailable features",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_2_2_1",
+      "idCard": "card_2_2_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_30",
+          "name": "Implement Windows netsh wlan show interfaces parser",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_31",
+          "name": "Implement macOS wdutil / system_profiler SPAirPortDataType parser",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_32",
+          "name": "Implement Linux nmcli / iw dev link parser",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_33",
+          "name": "Persist 1m Wi-Fi aggregates with composite PRIMARY KEY (ts_minute, bssid)",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_70",
+          "name": "Show greatest-sample-count BSSID per minute, break ties lexicographically, and mark changes between consecutive populated minutes; retain all BSSID rows in history",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_71",
+          "name": "Verify sum(sample_count) across BSSID rows equals the number of Wi-Fi samples for that minute; no sample is double-counted",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_2_3_1",
+      "idCard": "card_2_3_1",
+      "name": "Phase 2 Acceptance Gates",
+      "checkItems": [
+        {
+          "id": "ci_34",
+          "name": "Gate 1: Restricted sandbox without CAP_NET_RAW or Wi-Fi exits 0 and exposes fallback flags",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_35",
+          "name": "Gate 2: Two BSSIDs in one minute create distinct rows with no double-counting; verify chart behavior in Phase 3",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_3_1_1",
+      "idCard": "card_3_1_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_36",
+          "name": "Integrate Ookla Speedtest CLI JSON parser + internal chunked HTTPS fallback",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_37",
+          "name": "Sample loaded ICMP latency every 250ms during speedtest for bufferbloat delta",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_38",
+          "name": "Defer scheduled tests by 15m if 10s interface traffic exceeds 2.00 Mbps",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_3_2_1",
+      "idCard": "card_3_2_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_39",
+          "name": "Enforce asyncio.Queue(maxsize=10) drop-oldest policy per WebSocket client",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_40",
+          "name": "Apply rounding policy: ms (1dp), % (1dp), Mbps (2dp), RSSI/link rate (int)",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_3_2_3",
+      "idCard": "card_3_2_3",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_41",
+          "name": "Parse #token= URL fragment into sessionStorage and strip via history.replaceState",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_42",
+          "name": "Render live dual-line latency chart, Wi-Fi RSSI chart, status banner, and degraded-mode badges",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_43",
+          "name": "Wire cursor-paginated event table and CSV export download",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_76",
+          "name": "Export the selected telemetry range and displayed events page using the Section 11.5 columns, schema marker, escaping, BSSID rows and shared precision",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_3_3_1",
+      "idCard": "card_3_3_1",
+      "name": "Phase 3 Acceptance Gates",
+      "checkItems": [
+        {
+          "id": "ci_44",
+          "name": "Gate 1: Stalled WS client (30s) caps at 10 queued frames; collector jitter <5.0ms",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_45",
+          "name": "Gate 2: 5.00 Mbps background download defers scheduled speedtest cleanly",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_46",
+          "name": "Gate 3: REST, WS, and CSV outputs match decimal rounding policy identically",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_77",
+          "name": "Gate 4: Verify telemetry defaults, tiers, 1,000-point limit, retention, gaps, BSSID arrays, dominant selection and roam markers, empty results and CSV",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_83",
+          "name": "Gate 5: Verify the speedtest endpoint idempotency replay after restart",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_4_1_1",
+      "idCard": "card_4_1_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_47",
+          "name": "Require explicit UI consent acceptance (with jurisdiction notice) stored in settings table",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_48",
+          "name": "Block raw IPs, RFC1918 subnets, .gov/.mil/.int TLDs, and non-diagnostic ports",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_49",
+          "name": "Enforce max_concurrent_jobs=1 and 15-minute monotonic cooldown timer",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_78",
+          "name": "Store consent acceptance timestamp and the exact notice version; require renewed consent only when the notice changes",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_79",
+          "name": "Provide revocation that blocks future probes, cancels an active Module E job and retains prior results unless separately deleted",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_80",
+          "name": "Expose current consent state/version in the UI and re-check consent on every probe-run request",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_4_2_1",
+      "idCard": "card_4_2_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_50",
+          "name": "Compare ISP UDP DNS resolution against encrypted Cloudflare DoH",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_51",
+          "name": "Detect TLS ClientHello SNI resets and 15-hop TCP traceroute null-routing",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_52",
+          "name": "Execute differential VPN throughput test via userspace wireproxy (25MB/10MB cap)",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_4_3_1",
+      "idCard": "card_4_3_1",
+      "name": "Phase 4 Acceptance Gates",
+      "checkItems": [
+        {
+          "id": "ci_53",
+          "name": "Gate 1: Pre-consent call returns 403 CONSENT_REQUIRED; invalid domain returns 422",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_54",
+          "name": "Gate 2: Concurrent call returns 409 Conflict; immediate retry returns 429 PROBE_COOLDOWN_ACTIVE",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_55",
+          "name": "Gate 3: +2h wall-clock forward step does not bypass 15-minute monotonic cooldown",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_86",
+          "name": "Gate 4: Verify consent version changes, revocation during a run, retained results, scheduled-run blocking and real endpoint replay after restart",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_5_1_1",
+      "idCard": "card_5_1_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_56",
+          "name": "Launch the dashboard at http://127.0.0.1:8080/#token=<session_token>; frontend stores the fragment token in sessionStorage and immediately clears the fragment",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_57",
+          "name": "Bundle standalone executables via Nuitka/PyInstaller",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_58",
+          "name": "Create unprivileged systemd user unit, macOS LaunchAgent, and Windows Scheduled Task",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_5_2_1",
+      "idCard": "card_5_2_1",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_59",
+          "name": "Sign release artifacts (Authenticode, Apple Notarization, GPG + SHA256SUMS)",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_60",
+          "name": "Verify update manifest with embedded Ed25519 public key before download",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_61",
+          "name": "Implement 30-second supervisor watchdog with automatic rollback and bad-hash quarantine",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_5_3_1",
+      "idCard": "card_5_3_1",
+      "name": "Phase 5 Acceptance Gates",
+      "checkItems": [
+        {
+          "id": "ci_62",
+          "name": "Gate 1: Crashing signed update rolls back to previous_bin within 30s and quarantines hash",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_63",
+          "name": "Gate 2: Triggered run preserves identical tr_ across WS events, logs, and CSV export",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_1_2_5",
+      "idCard": "card_1_2_5",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_65",
+          "name": "Use application lifespan shutdown to stop new background work and drain or cancel active tasks within a documented timeout",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_66",
+          "name": "Close database connections cleanly and leave WAL/database reopenable after graceful shutdown",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_67",
+          "name": "On restart after forced termination, reconcile persisted RUNNING jobs to FAILED with DAEMON_RESTARTED",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_68",
+          "name": "Test SIGTERM/service-stop where supported and verify clean exit plus successful restart without orphaned locks",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_84",
+          "name": "Best-effort broadcast SERVER_SHUTDOWN and close WebSockets without letting slow clients block the 10-second total deadline",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_85",
+          "name": "Cancel or drain tasks, terminate and reap owned child processes, atomically mark interrupted keyed jobs FAILED/DAEMON_SHUTDOWN, and roll back incomplete transactions",
+          "state": "incomplete"
+        }
+      ]
+    },
+    {
+      "id": "chk_3_2_2",
+      "idCard": "card_3_2_2",
+      "name": "Definition of Done",
+      "checkItems": [
+        {
+          "id": "ci_72",
+          "name": "Implement whole-second UTC [from,to), default last 15 minutes at 1s, 1s/1m/1d granularity, validation, empty ranges and a 1,000-point maximum per Section 7.8",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_73",
+          "name": "Serve 1-second samples only from the latest-hour in-memory ring buffer; do not write raw 1-second samples to disk",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_74",
+          "name": "Serve 1-minute aggregates for the 30-day tier and daily aggregates for the 365-day tier, respecting retention boundaries",
+          "state": "incomplete"
+        },
+        {
+          "id": "ci_75",
+          "name": "Return the Section 7.8 granularity-specific response shapes, including all minute BSSID rows, ordered points and shared numeric precision",
+          "state": "incomplete"
+        }
+      ]
+    }
+  ]
+}
